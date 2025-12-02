@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Safe URL Injection Practice Lab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      padding: 40px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.4rem;
+      margin-bottom: 20px;
+      color: #222;
+    }
+    .card {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 25px;
+      max-width: 800px;
+      margin: 20px auto;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+    .example {
+      padding: 10px;
+      background: #eef3ff;
+      border-left: 4px solid #3f51b5;
+      margin-top: 15px;
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
+    code {
+      background: #eee;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Safe URL Injection Practice Lab</h1>
+
+  <div class="card">
+    <h2>Injected (Sanitized) URL Parameter</h2>
+    <p>This page safely reads the URL parameter <code>?name=</code> and displays it as plain text (escaped), meaning scripts will NOT run.</p>
+
+    <p><strong>Sanitized Output:</strong></p>
+    <div id="output" class="example">No parameter detected.</div>
+  </div>
+
+  <div class="card">
+    <h2>Try it Yourself</h2>
+    <p>Modify your URL like:</p>
+
+    <div class="example">
+      https://yourwebsite.com/safe-url-injection-lab.html?name=&lt;script&gt;alert('XSS')&lt;/script&gt;
+    </div>
+
+    <p>It will be shown as text instead of executing.</p>
+  </div>
+
+  <div class="card">
+    <h2>How This Works</h2>
+    <p>The page escapes dangerous characters before displaying them:</p>
+
+    <pre class="example">
+&lt;  becomes  &amp;lt;
+&gt;  becomes  &amp;gt;
+"  becomes  &amp;quot;
+'  becomes  &#39;
+    </pre>
+
+    <p>This prevents:</p>
+    <ul>
+      <li>Reflected XSS</li>
+      <li>Script execution</li>
+      <li>HTML injection</li>
+    </ul>
+
+    <p>You can safely publish this version online because it does NOT run anything injected into the URL.</p>
+  </div>
+
+  <script>
+    function sanitize(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get("name");
+
+    if (name) {
+      document.getElementById("output").innerHTML = sanitize(name);
+    }
+  </script>
+
+</body>
+</html>
